@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "ramenskoe-bot-table",
+  "private_key_id": "fcb7a2637170bc645c1eb4073ce2f7bd0d91bbef",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCvPvhrNdhb6sWe\n54Vpyva73a73fYsV9shGhUkcDcqlEmoB1xBEukaq4W9wObDG9BK5ErQsK6xkasme\nxGWv7Rg6QJD/6TqmD76ZX0DtVwz4z5NK5kQuV0JUx4z4OmiTI0fJwPmtfk1kRcFV\n9XWW7g8PP36fPKrv21PRW6XllOlLYBkAHt9kpBtYv1IMCtgvBKn6LyNDTO3b8N4x\nlPPyowhodF3ZtX4xGCNv0eIFxwrA9s+yqXI9aTNluhAb9OQiD7MbzzTyM4O6aIjq\na5yqRm3MeaUTjeAh3rqQlzLvPFZyg6Rf9Fy99J0tUDGxFxqodO0W8AGVhgjL54Wt\n5ouGOKa/AgMBAAECggEAE1LbvKKm1VfZa7C2ztgRBd0nbmXbANSB9/i5e4zvw+z4\nYHSQ+CscILqT+al62y1NpTexQ0+bhkUaL1YTqmb37XByLK3QiEAjMbFFrQYUyZjF\n8pPaf8uiZkvMuRBjuJnC0DXlsiJDsWNZsrtKuJZOdc14DmH3rVQfdW3oKJ0Xbnae\npvBZrROJ1u1qonuxpR9jGORdiX5nuiR/K+30bje8Ucx+4QjepMugjEXxTtHUheIT\nCuqwnaRFivtU6Pj0ERFkqO2EfW6gA4qdsaPidY/Kjok6Hb4U5J3BPH28N+Z6lDrX\n/4/82BbQTPAjZ/UsbzMYj5ZnM39ZYt6ya2qmMjiOWQKBgQDwGFgPZyTgPfVogrUb\nkkm0LX1JG4gi8UEzw/MVcm5rNebYeziaj3q1kYrHnyjKuZ7DN8yHmgqnSTmjICGh\nWawTs/ON/1tThGhZXOjHEjlKU0dvTontJlylLnqwLGAtfuWVq5YefZ/8gKIMu61S\noIdItJC/b2TPHrPH7ggYX/YnpwKBgQC62uG7ROOKTH+2R6CV6q6o6sWjv01LtAjx\nmZuxQbozeEaumlj6vYnBi8pizPTjUD7Yq8JYtctd7Pcsurf24jKjqb4Xvn/trTOq\n+5MFJ3YU2VR6ftlPZlPXWFXEpa4tx59A+eiCy9jWmbZVRnIKDN54joxu12C6oldi\n6lLV0CrrKQKBgQDY+ncivGk0CmptH6rClwrqvS17U1lNktAFEzHskPS/CQBtZbZ6\n3+3ahwRvcSPxSZzz+cpqRckY83EWPeSGp75+M+OI0Vxcds3C7NcliQ+jXu2w5r55\nRnD1irKv4fqtQwACqgXJ2mgqTqmkbjut74szJpOlnerxz2JT7Yb9WEPiAwKBgCMb\n4XIofYCM4ypCxx+kGvFOO5iK52EkENIkhKaHrQ7iuJUyFyn11x5wv7RUwma7uzNH\nAptcfTvGvKLA6rQOyGkMCdW4S51DAAROhM9hHMTKGR9zGi3bEkHSLTtnzhR3/6pb\nyp5Y4wNfmmzncaIFzP9l+WkSOvCWdEj3slzOYmIRAoGBAIvcCVfo0/1xxgT+6jtZ\nqqjQh4Har5LNAHzwcRfPV7NXC8CzIXHk7+mGFy6Fm/gWu2wfC3t3WVSwr7VaANEP\nkSmo9rZmgEndqrmTwb70zEWTtm5gfhyGJQXJCxx2uzczB8V8M/ete95DuTnVqhWY\nw2oqzD0G725W9y1jeNMqtMnu\n-----END PRIVATE KEY-----\n",
+  "client_email": "ramenskoe-bot@ramenskoe-bot-table.iam.gserviceaccount.com",
+  "client_id": "115346379390512009616",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/ramenskoe-bot%40ramenskoe-bot-table.iam.gserviceaccount.com"
+}
