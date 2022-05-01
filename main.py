@@ -15,8 +15,8 @@ import telebot
 import datetime
 from telebot.types import InputMediaPhoto
 
-bot = telebot.TeleBot(config('BOT_TOKEN'))
-# bot = telebot.TeleBot(config('Ram2biz_bot'))
+# bot = telebot.TeleBot(config('BOT_TOKEN'))
+bot = telebot.TeleBot(config('Ram2biz_bot'))
 users_dict: Dict[int, BotUser] = dict()
 
 
