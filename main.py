@@ -412,6 +412,13 @@ def input_phone(message: Message) -> None:
                     error = True
         else:
             error = True
+    elif len(user_phone_list) == 11:
+        if user_phone_list[0] == '8':
+            for symbol in user_phone_list[1:]:
+                if not symbol.isdigit():
+                    error = True
+        else:
+            error = True
     else:
         error = True
 
@@ -8073,7 +8080,7 @@ def start_message(message: Message) -> str:
 
 def phone_message() -> str:
     return f'Введите Ваш номер телефона\n' \
-           f'В формате +7ХХХХХХХХХХ'
+           f'В формате +7ХХХХХХХХХХ или 8XXXXXXXXXX'
 
 
 def choose_service_message() -> str:
