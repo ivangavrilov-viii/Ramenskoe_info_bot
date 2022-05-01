@@ -423,7 +423,8 @@ def input_phone(message: Message) -> None:
         error = True
 
     if error:
-        bot.send_message(user_id, 'Введен неправильный номер телефона\nПопробуйте ввести заново')
+        bot.send_message(user_id, 'Введен неправильный номер телефона\nПопробуйте ввести заново\n\n'
+                                  'Но уже в формате +7ХХХХХХХХХХ или 8XXXXXXXXXX')
         bot.register_next_step_handler(message, input_phone)
     else:
         users_dict[user_id].phone = user_phone
@@ -8079,8 +8080,7 @@ def start_message(message: Message) -> str:
 
 
 def phone_message() -> str:
-    return f'Введите Ваш номер телефона\n' \
-           f'В формате +7ХХХХХХХХХХ или 8XXXXXXXXXX'
+    return f'Введите Ваш номер телефона'
 
 
 def choose_service_message() -> str:
