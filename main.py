@@ -28,8 +28,8 @@ def start(message: Message) -> None:
     if message.text == '/start':
         if message.chat.id not in users_dict:
             users_dict[message.chat.id] = BotUser(message.chat)
-            bot.send_message(message.chat.id, start_message(message))
-            bot.register_next_step_handler(message, input_inn)
+        bot.send_message(message.chat.id, start_message(message))
+        bot.register_next_step_handler(message, input_inn)
     else:
         if message.chat.id in users_dict:
             if not message.text.startswith('<'):
