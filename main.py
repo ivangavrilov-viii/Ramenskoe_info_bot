@@ -1,8 +1,7 @@
-from bot_users.class_user import BotUser
-from all_needs_messages import need_meet_messages, need_money_messages, need_land_messages, \
-    need_workers_messages, need_promotion_messages, need_other_support_messages, socials_mes
+from all_needs_messages import meet_mes, money_mes, land_mes, work_mes, prom_mes, other_mes, socials_mes
 from all_needs import land, promotion, money, socials
 from telebot.types import InputMediaPhoto
+from bot_users.class_user import BotUser
 from telebot.types import Message
 from decouple import config
 from typing import Dict
@@ -13,7 +12,6 @@ import telebot
 import time
 
 
-# bot = telebot.TeleBot(config('BOT_TOKEN'))
 bot = telebot.TeleBot(config('Ram2biz_bot'))
 users_dict: Dict[int, BotUser] = dict()
 
@@ -23,7 +21,6 @@ def start(message: Message) -> None:
     """Функция вызова и обработки основных команд бота"""
 
     global users_dict
-
 
     if message.text == '/start':
         if message.chat.id not in users_dict:
@@ -37,349 +34,221 @@ def start(message: Message) -> None:
 
             if message.text == 'Мне нужны деньги':
                 users_dict[message.chat.id].start_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                bot.send_message(message.chat.id, need_money_messages.choose_money_message(),
-                                 reply_markup=money.money_kinds())
+                bot.send_message(message.chat.id, money_mes.choose_money_message(), reply_markup=money.money_kinds())
             elif message.text == 'Мне нужен льготный кредит':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_money_messages.money_need_credit(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, money_mes.money_need_credit(),
                                  reply_markup=money.money_need_credit_link())
-                bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                                 reply_markup=money.back_to_money_kinds())
+                bot.send_message(message.chat.id, text=back_mes(), reply_markup=money.back_to_money_kinds())
             elif message.text == 'Мне нужен инвестор':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_money_messages.money_need_investor(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, money_mes.money_need_investor(),
                                  reply_markup=money.back_to_money_kinds())
             elif message.text == 'Областное финансирование':
-                bot.send_message(message.chat.id, need_money_messages.choose_money_message(),
+                bot.send_message(message.chat.id, money_mes.choose_money_message(),
                                  reply_markup=money.money_country_finance())
                 bot.register_next_step_handler(message, money_country_finance)
             elif message.text == 'Мне нужны раменские субсидии':
-                bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP(),
+                bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP(),
                                  reply_markup=money.ramensk_subsidies_keyboard())
                 bot.register_next_step_handler(message, money_ramensk_subsidies)
             elif message.text == '< Вернуться к раменским субсидиям':
-                bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP(),
+                bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP(),
                                  reply_markup=money.ramensk_subsidies_keyboard())
                 bot.register_next_step_handler(message, money_ramensk_subsidies)
             elif message.text == '< Вернуться к методам привлечения денежных средств':
-                bot.send_message(message.chat.id, need_money_messages.choose_money_message(),
-                                 reply_markup=money.money_kinds())
+                bot.send_message(message.chat.id, money_mes.choose_money_message(), reply_markup=money.money_kinds())
             elif message.text == '< Вернуться к видам областного финансирования':
-                bot.send_message(message.chat.id, need_money_messages.choose_money_message(),
+                bot.send_message(message.chat.id, money_mes.choose_money_message(),
                                  reply_markup=money.money_country_finance())
                 bot.register_next_step_handler(message, money_country_finance)
 
-
-            # DONE!!!!!!!!
             elif message.text == 'Мне нужно продвижение':
                 users_dict[message.chat.id].start_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                bot.send_message(message.chat.id, need_promotion_messages.choose_promotion_message(),
+                bot.send_message(message.chat.id, prom_mes.choose_promotion_message(),
                                  reply_markup=promotion.promotion_kinds())
             elif message.text == 'Разместите рекламу на городских рекламных щитах':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_promotion_messages.billboard_advertising(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, prom_mes.billboard_advertising(),
                                  reply_markup=promotion.back_to_promotion_kinds())
             elif message.text == 'Выступите на радио':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_promotion_messages.radio(),
-                                 reply_markup=promotion.back_to_promotion_kinds())
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, prom_mes.radio(), reply_markup=promotion.back_to_promotion_kinds())
             elif message.text == 'Примите участие в городских мероприятиях':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_promotion_messages.city_events(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, prom_mes.city_events(),
                                  reply_markup=promotion.back_to_promotion_kinds())
             elif message.text == 'Разместите ссылку о себе в Раменском бизнес-чате':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_promotion_messages.business_chat(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, prom_mes.business_chat(),
                                  reply_markup=promotion.back_to_promotion_kinds())
             elif message.text == 'О вас расскажут СМИ. Именно Ваше мнение будет ' \
                                  'востребовано на весь регион.':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_promotion_messages.media(),
-                                 reply_markup=promotion.back_to_promotion_kinds())
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, prom_mes.media(), reply_markup=promotion.back_to_promotion_kinds())
             elif message.text == 'Продайте товар за рубежом':
-                bot.send_message(message.chat.id, need_promotion_messages.choose_promotion_message(),
+                bot.send_message(message.chat.id, prom_mes.choose_promotion_message(),
                                  reply_markup=promotion.promotion_kinds_sale_aboard())
                 bot.register_next_step_handler(message, promotion_sale_aboard)
             elif message.text == '< Вернуться к продажам зарубежом':
-                bot.send_message(message.chat.id, need_promotion_messages.choose_promotion_message(),
+                bot.send_message(message.chat.id, prom_mes.choose_promotion_message(),
                                  reply_markup=promotion.promotion_kinds_sale_aboard())
                 bot.register_next_step_handler(message, promotion_sale_aboard)
             elif message.text == '< Вернуться к видам продвижения':
-                bot.send_message(message.chat.id, need_promotion_messages.choose_promotion_message(),
+                bot.send_message(message.chat.id, prom_mes.choose_promotion_message(),
                                  reply_markup=promotion.promotion_kinds())
+
             elif message.text == 'Мне нужны знакомства':
                 users_dict[message.chat.id].start_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                bot.send_message(message.chat.id, need_meet_messages.choose_meet_message(),
-                                 reply_markup=keyboards.meet_kind())
+                bot.send_message(message.chat.id, meet_mes.choose_meet_message(), reply_markup=keyboards.meet_kind())
             elif message.text == 'Персональный поиск бизнес-партнеров':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_meet_messages.partner_search(),
-                                 reply_markup=keyboards.back_to_meet_kind())
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, meet_mes.partner_search(), reply_markup=keyboards.back_to_meet_kind())
             elif message.text == 'Раменский бизнес-чат':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_meet_messages.business_chat(),
-                                 reply_markup=keyboards.back_to_meet_kind())
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, meet_mes.business_chat(), reply_markup=keyboards.back_to_meet_kind())
             elif message.text == 'Участие в городских мероприятиях':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_meet_messages.city_events(),
-                                 reply_markup=keyboards.back_to_meet_kind())
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, meet_mes.city_events(), reply_markup=keyboards.back_to_meet_kind())
             elif message.text == 'Стать членом бизнес-сообщества':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_meet_messages.business_community_1())
-                bot.send_message(message.chat.id, need_meet_messages.business_community_2())
-                bot.send_message(message.chat.id, need_meet_messages.business_community_3())
-                bot.send_message(message.chat.id, need_meet_messages.business_community_4(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, meet_mes.business_community_1())
+                bot.send_message(message.chat.id, meet_mes.business_community_2())
+                bot.send_message(message.chat.id, meet_mes.business_community_3())
+                bot.send_message(message.chat.id, meet_mes.business_community_4(),
                                  reply_markup=keyboards.back_to_meet_kind())
             elif message.text == '< Вернуться к списку знакомств':
-                bot.send_message(message.chat.id, need_meet_messages.choose_meet_message(),
-                                 reply_markup=keyboards.meet_kind())
+                bot.send_message(message.chat.id, meet_mes.choose_meet_message(), reply_markup=keyboards.meet_kind())
+
             elif message.text == 'Мне нужны работники':
                 users_dict[message.chat.id].start_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                bot.send_message(message.chat.id, need_workers_messages.choose_workers_message(),
+                bot.send_message(message.chat.id, work_mes.choose_workers_message(),
                                  reply_markup=keyboards.workers_kind())
             elif message.text == 'Найти в Центре занятости населения':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_workers_messages.employment_center(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, work_mes.employment_center(),
                                  reply_markup=keyboards.back_to_workers_kind())
             elif message.text == 'Найти в Федеральной базе вакансий и резюме':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_workers_messages.federal_base(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, work_mes.federal_base(),
                                  reply_markup=keyboards.back_to_workers_kind())
             elif message.text == 'Привлечь труд осужденных':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_workers_messages.convict_labor(),
-                                 reply_markup=keyboards.back_to_workers_kind())
-                bot.send_message(message.chat.id, need_workers_messages.workers_call(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, work_mes.convict_labor())
+                bot.send_message(message.chat.id, work_mes.workers_call(),
                                  reply_markup=keyboards.back_to_workers_kind())
             elif message.text == 'Волонтёры на мероприятия':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_workers_messages.workers_call(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, work_mes.workers_call(),
                                  reply_markup=keyboards.back_to_workers_kind())
             elif message.text == 'Подбор участников на мероприятия':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_workers_messages.workers_call(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, work_mes.workers_call(),
                                  reply_markup=keyboards.back_to_workers_kind())
             elif message.text == '< Вернуться к поиску работников':
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                bot.send_message(message.chat.id, need_workers_messages.choose_workers_message(),
+                bot.send_message(message.chat.id, work_mes.choose_workers_message(),
                                  reply_markup=keyboards.workers_kind())
+
             elif message.text == 'Мне нужны земля и помещение':
                 users_dict[message.chat.id].start_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                bot.send_message(message.chat.id, need_land_messages.choose_land_message(),
-                                 reply_markup=land.lands_kind())
+                bot.send_message(message.chat.id, land_mes.choose_land_message(), reply_markup=land.lands_kind())
             elif message.text == 'Установить киоск/павильон/палатку':
                 bot.send_message(message.chat.id, text='Выберете: ', reply_markup=land.set_up_kiosk_keyboard())
                 bot.register_next_step_handler(message, land_set_up_kiosk)
             elif message.text == 'Установить иной некапитальный объект':
-                bot.send_message(message.chat.id, need_land_messages.non_capital_object_1(),
+                bot.send_message(message.chat.id, land_mes.non_capital_object_1(),
                                  reply_markup=land.non_capital_keyboard())
                 bot.register_next_step_handler(message, land_set_up_kiosk_non_capital)
             elif message.text == 'Установить капитальный объект/строение или вести фермерское хозяйство':
-                bot.send_message(message.chat.id, need_land_messages.capital_object(),
+                bot.send_message(message.chat.id, land_mes.capital_object(),
                                  reply_markup=land.check_set_up_capital_object())
                 bot.register_next_step_handler(message, land_check_capital)
             elif message.text == 'Организовать ярмарку':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_land_messages.organize_fair())
-                bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                                 reply_markup=land.back_to_lands_kind())
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, land_mes.organize_fair())
+                bot.send_message(message.chat.id, back_mes(), reply_markup=land.back_to_lands_kind())
             elif message.text == 'Получить помещение':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
+                write_in_table(users_dict[message.chat.id])
                 media_group = []
                 for num in range(1, 11):
                     media_group.append(InputMediaPhoto(open('area_photos_land/%d.jpg' % num, 'rb')))
                 bot.send_media_group(message.chat.id, media=media_group)
-                bot.send_message(message.chat.id, need_land_messages.get_premises())
-
-                bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                                 reply_markup=land.back_to_lands_kind())
+                bot.send_message(message.chat.id, land_mes.get_premises())
+                bot.send_message(message.chat.id, back_mes(), reply_markup=land.back_to_lands_kind())
             elif message.text == 'Продление договора аренды':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_land_messages.renewal_of_lease(),
-                                 reply_markup=land.land_rent_link())
-                bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                                 reply_markup=land.back_to_lands_kind())
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, land_mes.renewal_of_lease(), reply_markup=land.land_rent_link())
+                bot.send_message(message.chat.id, back_mes(), reply_markup=land.back_to_lands_kind())
             elif message.text == '< Вернуться к поиску земли и помещений':
-                bot.send_message(message.chat.id, need_other_support_messages.choose_other_supports_message(),
+                bot.send_message(message.chat.id, other_mes.choose_other_supports_message(),
                                  reply_markup=land.lands_kind())
+
             elif message.text == 'Другие меры поддержки':
                 users_dict[message.chat.id].start_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                bot.send_message(message.chat.id, need_other_support_messages.choose_other_supports_message(),
+                bot.send_message(message.chat.id, other_mes.choose_other_supports_message(),
                                  reply_markup=keyboards.other_supports_kind())
             elif message.text == 'Бизнес Омбудсмен Раменского г.о.':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_other_support_messages.ombudsment(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, other_mes.ombudsment(),
                                  reply_markup=keyboards.back_to_other_supports_kind())
             elif message.text == 'Бесплатная юридическая помощь для МСП':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_other_support_messages.free_legal_consult(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, other_mes.free_legal_consult(),
                                  reply_markup=keyboards.back_to_other_supports_kind())
             elif message.text == 'Консультации от Управления потребительского рынка, инвестиций и ' \
                                  'развития предпринимательства':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_other_support_messages.consult_control(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, other_mes.consult_control(),
                                  reply_markup=keyboards.back_to_other_supports_kind())
             elif message.text == 'Наладить производство':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_other_support_messages.set_up_production(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, other_mes.set_up_production(),
                                  reply_markup=keyboards.back_to_other_supports_kind())
             elif message.text == 'Наладить фермерское хозяйство':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_other_support_messages.set_up_ferm(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, other_mes.set_up_ferm(),
                                  reply_markup=keyboards.back_to_other_supports_kind())
             elif message.text == 'IT сфера':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_other_support_messages.it_area(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, other_mes.it_area(),
                                  reply_markup=keyboards.back_to_other_supports_kind())
             elif message.text == 'Мораторий на проверки':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_other_support_messages.moratorium_on_inspections(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, other_mes.moratorium_on_inspections(),
                                  reply_markup=keyboards.back_to_other_supports_kind())
             elif message.text == 'Продление лицензий':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_other_support_messages.license_renewal(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, other_mes.license_renewal(),
                                  reply_markup=keyboards.back_to_other_supports_kind())
             elif message.text == 'Образовательные программы и обучающие мероприятия':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_other_support_messages.educational_programs_1())
-                bot.send_message(message.chat.id, need_other_support_messages.educational_programs_2(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, other_mes.educational_programs_1())
+                bot.send_message(message.chat.id, other_mes.educational_programs_2(),
                                  reply_markup=keyboards.back_to_other_supports_kind())
             elif message.text == 'Записаться на личный прием':
-                users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                users_dict[message.chat.id].start_time = None
-                users_dict[message.chat.id].end_time = None
-                bot.send_message(message.chat.id, need_other_support_messages.make_an_appointment(),
+                write_in_table(users_dict[message.chat.id])
+                bot.send_message(message.chat.id, other_mes.make_an_appointment(),
                                  reply_markup=keyboards.back_to_other_supports_kind())
             elif message.text == '< Вернуться к мерам поддержки':
-                sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-                users_dict[message.chat.id].bot_way = ''
-                bot.send_message(message.chat.id, need_other_support_messages.choose_other_supports_message(),
+                bot.send_message(message.chat.id, other_mes.choose_other_supports_message(),
                                  reply_markup=keyboards.other_supports_kind())
             elif message.text == '< Вернуться к целям обращения':
                 bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
             else:
-                bot.send_message(message.chat.id, 'Такой команды Я не знаю.\nВоспользуйтесь клавиатурой снизу ',
-                                 reply_markup=keyboards.main_aims())
+                bot.send_message(message.chat.id, error_mes(), reply_markup=keyboards.main_aims())
                 bot.register_next_step_handler(message, start)
         else:
             users_dict[message.chat.id] = BotUser(message.chat)
             bot.send_message(message.chat.id, start_message(message))
             bot.register_next_step_handler(message, input_inn)
+
+
+def write_in_table(user: BotUser) -> None:
+    user.end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
+    sheets_example.insert_values(user.insert_in_table())
+    user.bot_way = ''
+    user.start_time = None
+    user.end_time = None
 
 
 def input_inn(message: Message) -> None:
@@ -395,7 +264,7 @@ def input_inn(message: Message) -> None:
         error = True
 
     if error:
-        bot.send_message(user_id, 'Введен неправильный ИНН\nПопробуйте ввести заново')
+        bot.send_message(user_id, 'Введен неправильный ИНН...\nПопробуйте ввести снова')
         bot.register_next_step_handler(message, input_inn)
 
 
@@ -423,7 +292,7 @@ def input_phone(message: Message) -> None:
         error = True
 
     if error:
-        bot.send_message(user_id, 'Введен неправильный номер телефона\nПопробуйте ввести заново\n\n'
+        bot.send_message(user_id, 'Введен неправильный номер телефона...\nПопробуйте ввести заново\n\n'
                                   'Но уже в формате +7ХХХХХХХХХХ или 8XXXXXXXXXX')
         bot.register_next_step_handler(message, input_phone)
     else:
@@ -436,25 +305,14 @@ def land_check_capital(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Да':
         users_dict[message.chat.id].bot_way += 'Входит в перечень импортозамещения'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-
-        bot.send_message(message.chat.id, need_land_messages.check_capital_true_message_1(),
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, land_mes.check_capital_true_message_1(),
                          reply_markup=land.land_rent_link())
-        bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                         reply_markup=land.back_to_lands_kind())
+        bot.send_message(message.chat.id, back_mes(), reply_markup=land.back_to_lands_kind())
         bot.register_next_step_handler(message, start)
     elif user_answer == 'Нет':
         users_dict[message.chat.id].bot_way += ' Не входит в перечень импортозамещения'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-
+        write_in_table(users_dict[message.chat.id])
         bot.send_message(message.chat.id, 'Выберете участок:\nНемного подождите пока загрузятся файлы...')
         file_1 = open('info_materials/Промышленные земельные объекты.pptx', 'rb')
         file_2 = open('info_materials/Сельско-хозяйственные земельные объекты.pptx', 'rb')
@@ -466,45 +324,39 @@ def land_check_capital(message: Message) -> None:
             bot.register_next_step_handler(message, land_check_capital_false)
         except Exception as exception:
             print(f'{exception}')
-            bot.send_message(message.chat.id, 'Извини, проблемы на сервере...\nПопробуйте позже')
+            bot.send_message(message.chat.id, 'Извините, проблемы на сервере...\nПопробуйте позже')
             bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
             bot.register_next_step_handler(message, start)
         file_1.close()
         file_2.close()
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_land_messages.choose_land_message(),
-                         reply_markup=land.lands_kind())
+        bot.send_message(message.chat.id, land_mes.choose_land_message(), reply_markup=land.lands_kind())
     elif user_answer == '< Вернуться к целям обращения':
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=land.check_set_up_capital_object())
+        bot.send_message(message.chat.id, wrong(), reply_markup=land.check_set_up_capital_object())
         bot.register_next_step_handler(message, land_check_capital)
 
 
 def land_check_capital_false(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Да':
-        bot.send_message(message.chat.id, need_land_messages.check_capital_true_message_true())
-        bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                         reply_markup=land.back_to_lands_kind())
+        bot.send_message(message.chat.id, land_mes.check_capital_true_message_true())
+        bot.send_message(message.chat.id, back_mes(), reply_markup=land.back_to_lands_kind())
         bot.register_next_step_handler(message, start)
     elif user_answer == 'Нет':
-        bot.send_message(message.chat.id, need_land_messages.check_capital_true_message_false())
-        bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                         reply_markup=land.back_to_lands_kind())
+        bot.send_message(message.chat.id, land_mes.check_capital_true_message_false())
+        bot.send_message(message.chat.id, back_mes(), reply_markup=land.back_to_lands_kind())
         bot.register_next_step_handler(message, start)
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_land_messages.capital_object(),
-                         reply_markup=land.check_set_up_capital_object())
+        bot.send_message(message.chat.id, land_mes.capital_object(), reply_markup=land.check_set_up_capital_object())
         bot.register_next_step_handler(message, land_check_capital)
     elif user_answer == '< Вернуться к целям обращения':
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=land.check_set_up_capital_object())
+        bot.send_message(message.chat.id, wrong(), reply_markup=land.check_set_up_capital_object())
         bot.register_next_step_handler(message, land_check_capital_false)
 
 
@@ -512,28 +364,17 @@ def land_check_capital_false(message: Message) -> None:
 def land_set_up_kiosk(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Частная земля':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-
-        bot.send_message(message.chat.id, need_land_messages.check_set_up_kiosk_private_1(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, land_mes.check_set_up_kiosk_private_1(),
                          reply_markup=land.set_up_kiosk_private_keyboard())
-
         bot.register_next_step_handler(message, land_set_up_kiosk_private)
     elif user_answer == 'Гос.земля':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
 
         file = open('info_materials/Как установить Нестационарный Торговый Объект.pdf', 'rb')
         bot.send_message(message.chat.id, 'Как установить НТО в Раменском г.о.\nПодождите пока загрузится файл...')
-
         try:
             bot.send_document(message.chat.id, file)
             time.sleep(1)
@@ -541,31 +382,28 @@ def land_set_up_kiosk(message: Message) -> None:
                              reply_markup=land.set_up_kiosk_set_up_NTO_keyboard())
             bot.register_next_step_handler(message, land_set_up_kiosk_prezent)
         except Exception as exception:
-            print(f'{exception}')
-            bot.send_message(message.chat.id, 'Извини, проблемы на сервере...\nПопробуйте позже')
+            print(exception)
+            bot.send_message(message.chat.id, 'Извините, проблемы на сервере...\nПопробуйте позже')
             bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
             bot.register_next_step_handler(message, start)
         file.close()
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_land_messages.choose_land_message(),
-                         reply_markup=land.lands_kind())
+        bot.send_message(message.chat.id, land_mes.choose_land_message(), reply_markup=land.lands_kind())
         bot.register_next_step_handler(message, start)
     elif user_answer == '< Вернуться к целям обращения':
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=land.set_up_kiosk_keyboard())
+        bot.send_message(message.chat.id, wrong(), reply_markup=land.set_up_kiosk_keyboard())
         bot.register_next_step_handler(message, land_set_up_kiosk)
 
 
 def land_set_up_kiosk_private(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Как согласовать?':
-        bot.send_message(message.chat.id, need_land_messages.check_set_up_kiosk_private_2(),
+        bot.send_message(message.chat.id, land_mes.check_set_up_kiosk_private_2(),
                          reply_markup=land.set_up_kiosk_private_link())
-        bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                         reply_markup=land.back_to_lands_kind())
+        bot.send_message(message.chat.id, back_mes(), reply_markup=land.back_to_lands_kind())
         bot.register_next_step_handler(message, start)
     elif user_answer == '< Назад':
         bot.send_message(message.chat.id, text='Выберете: ', reply_markup=land.set_up_kiosk_keyboard())
@@ -574,8 +412,7 @@ def land_set_up_kiosk_private(message: Message) -> None:
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=land.set_up_kiosk_private_keyboard())
+        bot.send_message(message.chat.id, wrong(), reply_markup=land.set_up_kiosk_private_keyboard())
         bot.register_next_step_handler(message, land_set_up_kiosk_private)
 
 
@@ -583,7 +420,6 @@ def land_set_up_kiosk_prezent(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Как сделать презентацию ?':
         file = open('info_materials/Презентация МВК Раменское для примера.pptx', 'rb')
-
         try:
             bot.send_document(message.chat.id, file)
             time.sleep(1)
@@ -591,8 +427,8 @@ def land_set_up_kiosk_prezent(message: Message) -> None:
                              reply_markup=land.set_up_kiosk_main_req_keyboard())
             bot.register_next_step_handler(message, land_set_up_kiosk_req)
         except Exception as exception:
-            print(f'{exception}')
-            bot.send_message(message.chat.id, 'Извини, проблемы на сервере...\nПопробуйте позже')
+            print(exception)
+            bot.send_message(message.chat.id, 'Извините, проблемы на сервере...\nПопробуйте позже')
             bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
             bot.register_next_step_handler(message, start)
         file.close()
@@ -603,8 +439,7 @@ def land_set_up_kiosk_prezent(message: Message) -> None:
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=land.set_up_kiosk_set_up_NTO_keyboard())
+        bot.send_message(message.chat.id, wrong(), reply_markup=land.set_up_kiosk_set_up_NTO_keyboard())
         bot.register_next_step_handler(message, land_set_up_kiosk_prezent)
 
 
@@ -612,20 +447,17 @@ def land_set_up_kiosk_req(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Основные требования по включению НТО в схему?':
         file = open('info_materials/Основные требования по включению НТО.jpg', 'rb')
-
         try:
             bot.send_document(message.chat.id, file)
-            time.sleep(1)
             bot.send_message(message.chat.id, 'Нажмите кнопку на клавиатуре: ',
                              reply_markup=land.set_up_kiosk_auq_keyboard())
             bot.register_next_step_handler(message, land_set_up_kiosk_finish)
         except Exception as exception:
-            print(f'{exception}')
-            bot.send_message(message.chat.id, 'Извини, проблемы на сервере...\nПопробуйте позже')
+            print(exception)
+            bot.send_message(message.chat.id, 'Извините, проблемы на сервере...\nПопробуйте позже')
             bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
             bot.register_next_step_handler(message, start)
         file.close()
-
     elif user_answer == '< Назад':
         bot.send_message(message.chat.id, 'Как установить НТО в Раменском г.о.\nПодождите пока загрузится файл...')
         bot.send_document(message.chat.id,
@@ -638,8 +470,7 @@ def land_set_up_kiosk_req(message: Message) -> None:
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=land.set_up_kiosk_main_req_keyboard())
+        bot.send_message(message.chat.id, wrong(), reply_markup=land.set_up_kiosk_main_req_keyboard())
         bot.register_next_step_handler(message, land_set_up_kiosk_req)
 
 
@@ -647,23 +478,19 @@ def land_set_up_kiosk_finish(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Как принять участие в аукционе?':
         file = open('info_materials/Как принять участие в аукционе на НТО.jpg', 'rb')
-
         try:
             bot.send_document(message.chat.id, file)
-            time.sleep(1)
             bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                              reply_markup=land.back_to_lands_kind())
             bot.register_next_step_handler(message, start)
         except Exception as exception:
-            print(f'{exception}')
-            bot.send_message(message.chat.id, 'Извини, проблемы на сервере...\nПопробуйте позже')
+            print(exception)
+            bot.send_message(message.chat.id, 'Извините, проблемы на сервере...\nПопробуйте позже')
             bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
             bot.register_next_step_handler(message, start)
         file.close()
-
     elif user_answer == '< Назад':
         bot.send_document(message.chat.id, open('info_materials/Презентация МВК Раменское для примера.pptx', 'rb'))
-        time.sleep(1)
         bot.send_message(message.chat.id, 'Нажмите кнопку на клавиатуре: ',
                          reply_markup=land.set_up_kiosk_main_req_keyboard())
         bot.register_next_step_handler(message, land_set_up_kiosk_req)
@@ -671,8 +498,7 @@ def land_set_up_kiosk_finish(message: Message) -> None:
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=land.set_up_kiosk_auq_keyboard())
+        bot.send_message(message.chat.id, wrong(), reply_markup=land.set_up_kiosk_auq_keyboard())
         bot.register_next_step_handler(message, land_set_up_kiosk_finish)
 
 
@@ -680,28 +506,20 @@ def land_set_up_kiosk_finish(message: Message) -> None:
 def land_set_up_kiosk_non_capital(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Как получить услугу ?':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-
-        bot.send_message(message.chat.id, need_land_messages.non_capital_object_2(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, land_mes.non_capital_object_2(),
                          reply_markup=land.set_up_kiosk_non_capital_link())
-        bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                         reply_markup=land.back_to_lands_kind())
+        bot.send_message(message.chat.id, back_mes(), reply_markup=land.back_to_lands_kind())
         bot.register_next_step_handler(message, start)
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_land_messages.choose_land_message(),
-                         reply_markup=land.lands_kind())
+        bot.send_message(message.chat.id, land_mes.choose_land_message(), reply_markup=land.lands_kind())
         bot.register_next_step_handler(message, start)
     elif user_answer == '< Вернуться к целям обращения':
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=land.non_capital_keyboard())
+        bot.send_message(message.chat.id, wrong(), reply_markup=land.non_capital_keyboard())
         bot.register_next_step_handler(message, land_set_up_kiosk_non_capital)
 
 
@@ -711,154 +529,76 @@ def promotion_sale_aboard(message: Message) -> None:
 
     sale_aboard_user_answer = message.text
     if sale_aboard_user_answer == 'Софинансирование транспортировки на новые экспортные рынки':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_promotion_messages.sale_abroad_1(),
-                         reply_markup=promotion.promotion_sale_aboard_more_link())
-        bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                         reply_markup=promotion.back_to_sale_aboard())
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, prom_mes.sale_abroad_1(), reply_markup=promotion.abroad_link())
+        bot.send_message(message.chat.id, text=back_mes(), reply_markup=promotion.back_to_sale_aboard())
     elif sale_aboard_user_answer == 'Софинансирование сертификации продукции':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_promotion_messages.sale_abroad_2(),
-                         reply_markup=promotion.promotion_sale_aboard_more_link())
-        bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                         reply_markup=promotion.back_to_sale_aboard())
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, prom_mes.sale_abroad_2(), reply_markup=promotion.abroad_link())
+        bot.send_message(message.chat.id, text=back_mes(), reply_markup=promotion.back_to_sale_aboard())
     elif sale_aboard_user_answer == 'Софинансирование организации международных бизнес-миссий (выставок)':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_promotion_messages.sale_abroad_3(),
-                         reply_markup=promotion.promotion_sale_aboard_more_link())
-        bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                         reply_markup=promotion.back_to_sale_aboard())
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, prom_mes.sale_abroad_3(), reply_markup=promotion.abroad_link())
+        bot.send_message(message.chat.id, text=back_mes(), reply_markup=promotion.back_to_sale_aboard())
     elif sale_aboard_user_answer == 'Создание и модернизация сайта':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_promotion_messages.sale_abroad_4(),
-                         reply_markup=promotion.promotion_sale_aboard_more_link())
-        bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                         reply_markup=promotion.back_to_sale_aboard())
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, prom_mes.sale_abroad_4(), reply_markup=promotion.abroad_link())
+        bot.send_message(message.chat.id, text=back_mes(), reply_markup=promotion.back_to_sale_aboard())
     elif sale_aboard_user_answer == 'Размещение на международных электронных площадках':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_promotion_messages.sale_abroad_5(),
-                         reply_markup=promotion.promotion_sale_aboard_more_link())
-        bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                         reply_markup=promotion.back_to_sale_aboard())
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, prom_mes.sale_abroad_5(), reply_markup=promotion.abroad_link())
+        bot.send_message(message.chat.id, text=back_mes(), reply_markup=promotion.back_to_sale_aboard())
     elif sale_aboard_user_answer == 'Перевод текстов на иностранные языки':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_promotion_messages.sale_abroad_6(),
-                         reply_markup=promotion.promotion_sale_aboard_more_link())
-        bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                         reply_markup=promotion.back_to_sale_aboard())
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, prom_mes.sale_abroad_6(), reply_markup=promotion.abroad_link())
+        bot.send_message(message.chat.id, text=back_mes(), reply_markup=promotion.back_to_sale_aboard())
     elif sale_aboard_user_answer == 'Маркетинговые исследования иностранных рынков':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_promotion_messages.sale_abroad_7(),
-                         reply_markup=promotion.promotion_sale_aboard_more_link())
-        bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                         reply_markup=promotion.back_to_sale_aboard())
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, prom_mes.sale_abroad_7(), reply_markup=promotion.abroad_link())
+        bot.send_message(message.chat.id, text=back_mes(), reply_markup=promotion.back_to_sale_aboard())
     elif sale_aboard_user_answer == 'Поиск зарубежных партнеров':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_promotion_messages.sale_abroad_8(),
-                         reply_markup=promotion.promotion_sale_aboard_more_link())
-        bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                         reply_markup=promotion.back_to_sale_aboard())
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, prom_mes.sale_abroad_8(), reply_markup=promotion.abroad_link())
+        bot.send_message(message.chat.id, text=back_mes(), reply_markup=promotion.back_to_sale_aboard())
     elif sale_aboard_user_answer == 'Участие в международных выставках за рубежом и в РФ':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_promotion_messages.sale_abroad_9(),
-                         reply_markup=promotion.promotion_sale_aboard_more_link())
-        bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                         reply_markup=promotion.back_to_sale_aboard())
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, prom_mes.sale_abroad_9(), reply_markup=promotion.abroad_link())
+        bot.send_message(message.chat.id, text=back_mes(), reply_markup=promotion.back_to_sale_aboard())
     elif sale_aboard_user_answer == 'Патентование продукции':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_promotion_messages.sale_abroad_10(),
-                         reply_markup=promotion.promotion_sale_aboard_more_link())
-        bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                         reply_markup=promotion.back_to_sale_aboard())
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, prom_mes.sale_abroad_10(), reply_markup=promotion.abroad_link())
+        bot.send_message(message.chat.id, text=back_mes(), reply_markup=promotion.back_to_sale_aboard())
     elif sale_aboard_user_answer == 'Обучение в акселерационных программах экспорта':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_promotion_messages.sale_abroad_11(),
-                         reply_markup=promotion.promotion_sale_aboard_more_link())
-        bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
-                         reply_markup=promotion.back_to_sale_aboard())
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, prom_mes.sale_abroad_11(), reply_markup=promotion.abroad_link())
+        bot.send_message(message.chat.id, text=back_mes(), reply_markup=promotion.back_to_sale_aboard())
     elif sale_aboard_user_answer == 'Семинары, вебинары, круглые столы по экспорту':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_promotion_messages.sale_abroad_more(),
-                         reply_markup=promotion.back_to_sale_aboard())
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, prom_mes.sale_abroad_more(), reply_markup=promotion.back_to_sale_aboard())
     elif sale_aboard_user_answer == 'Консультации по правовым вопросам, логистике, таможне':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_promotion_messages.sale_abroad_more(),
-                         reply_markup=promotion.back_to_sale_aboard())
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, prom_mes.sale_abroad_more(), reply_markup=promotion.back_to_sale_aboard())
     elif sale_aboard_user_answer == '< Вернуться к видам продвижения':
-        bot.send_message(message.chat.id, need_promotion_messages.choose_promotion_message(),
-                         reply_markup=promotion.promotion_kinds())
+        bot.send_message(message.chat.id, prom_mes.choose_promotion_message(), reply_markup=promotion.promotion_kinds())
         bot.register_next_step_handler(message, start)
     elif sale_aboard_user_answer == '< Вернуться к целям обращения':
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=promotion.promotion_kinds_sale_aboard())
+        bot.send_message(message.chat.id, wrong(), reply_markup=promotion.promotion_kinds_sale_aboard())
         bot.register_next_step_handler(message, promotion_sale_aboard)
 
 
@@ -868,304 +608,197 @@ def money_country_finance(message: Message) -> None:
 
     country_finance_user_answer = message.text
     if country_finance_user_answer == 'Бесплатная печать полиграфии':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_print(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_print(),
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Бесплатные видео- и аудиоролики':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_free_audio(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_free_audio(),
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Бесплатная наружная реклама':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_free_advertising(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_free_advertising(),
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Бесплатное создание фирменного стиля':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_firm_style(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_firm_style(),
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Бесплатное создание сайта':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_website(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_website(),
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Софинансирование рекламной компании от Яндекс.Директ':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_yandex_direct(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_yandex_direct(),
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Софинансирование рекламной компании от Яндекс.Бизнес':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_yandex_business(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_yandex_business(),
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Софинансирование рекламной компании от Яндекс.Карты':
         users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_yandex_maps(),
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_yandex_maps(),
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Софинансирование рекламной компании от Яндекс.Взгляд':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_yandex_view(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_yandex_view(),
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Компенсация затрат на оборудование':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_equipment_compensation(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_equipment_compensation(),
                          reply_markup=money.money_country_advert_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Компенсация затрат на социальное предпринимательство':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_social_compensation(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_social_compensation(),
                          reply_markup=money.money_country_advert_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Компенсация затрат на маркетплейсах':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_marketplace_compensation(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_marketplace_compensation(),
                          reply_markup=money.money_country_advert_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Лизинг оборудования':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_lizing(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_lizing(),
                          reply_markup=money.money_country_advert_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Гранты социальным предприятиям':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_grants_social(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_grants_social(),
                          reply_markup=money.money_country_advert_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Гранты молодым предприятиям':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_grants_young(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_grants_young(),
                          reply_markup=money.money_country_advert_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Компенсация % ставки по кредитам':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_credits_compensation(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_credits_compensation(),
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Поручительства':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_guarantees(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_guarantees(),
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Микрозаймы':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_microloans(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_microloans(),
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Льгота 50% по аренде':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_rental_allowance(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_rental_allowance(),
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Компенсация затрат на размещение в коворкинге':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_accomodation(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_accomodation(),
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Компенсация расходов на СБП':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_SBP(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_SBP(),
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Кредитные каникулы':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_credits_holidays(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_credits_holidays(),
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == 'Субсидии на найм молодых сотрудников':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_county_finance_young_worker(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_county_finance_young_worker(),
                          reply_markup=money.back_to_money_country_finance())
     elif country_finance_user_answer == '< Вернуться к методам привлечения денежных средств':
-        bot.send_message(message.chat.id, need_money_messages.choose_money_message(),
-                         reply_markup=money.money_kinds())
+        bot.send_message(message.chat.id, money_mes.choose_money_message(), reply_markup=money.money_kinds())
         bot.register_next_step_handler(message, start)
     elif country_finance_user_answer == '< Вернуться к целям обращения':
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=money.money_country_finance())
+        bot.send_message(message.chat.id, wrong(), reply_markup=money.money_country_finance())
         bot.register_next_step_handler(message, money_country_finance)
 
 
+#  !!! ЗАПИСЬ В ТАБЛИЦУ !!!
 def money_ramensk_subsidies(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Да':
         users_dict[message.chat.id].bot_way += f'ИП или Юр. лицо -> '
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_yes(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_yes(),
                          reply_markup=money.ramensk_subsidies_IP_yes_keyboard())
         bot.register_next_step_handler(message, money_ramensk_subsidies_yes)
     elif user_answer == 'Нет, я самозанятый':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == 'Нет, но я планирую стать ИП или самозанятым или ' \
-                        'открыть коммерческую организацию':
+                        'открыть организацию':
         users_dict[message.chat.id].bot_way += f'{message.text} -> '
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_2(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_2(),
                          reply_markup=money.ramensk_subsidies_no_2_keyboard())
         bot.register_next_step_handler(message, money_ramensk_subsidies_no_but)
     elif user_answer == '< Вернуться к методам привлечения денежных средств':
-        bot.send_message(message.chat.id, need_money_messages.choose_money_message(),
-                         reply_markup=money.money_kinds())
+        bot.send_message(message.chat.id, money_mes.choose_money_message(), reply_markup=money.money_kinds())
         bot.register_next_step_handler(message, start)
     elif user_answer == '< Вернуться к целям обращения':
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=money.ramensk_subsidies_keyboard())
+        bot.send_message(message.chat.id, wrong(), reply_markup=money.ramensk_subsidies_keyboard())
         bot.register_next_step_handler(message, money_ramensk_subsidies)
 
 
+#  !!! ЗАПИСЬ В ТАБЛИЦУ !!!
 def money_ramensk_subsidies_no_but(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Меньше прожиточного минимума':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_but_less(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_but_less(),
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == 'Больше прожиточного минимума':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_but_more(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_but_more(),
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Вернуться к методам привлечения денежных средств':
-        bot.send_message(message.chat.id, need_money_messages.choose_money_message(),
+        bot.send_message(message.chat.id, money_mes.choose_money_message(),
                          reply_markup=money.money_kinds())
         bot.register_next_step_handler(message, start)
     elif user_answer == '< Вернуться к целям обращения':
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=money.ramensk_subsidies_no_2_keyboard())
+        bot.send_message(message.chat.id, wrong(), reply_markup=money.ramensk_subsidies_no_2_keyboard())
         bot.register_next_step_handler(message, money_ramensk_subsidies_no_but)
 
 
@@ -1173,181 +806,155 @@ def money_ramensk_subsidies_yes(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Да, я соответствую':
         users_dict[message.chat.id].bot_way += f'{message.text} -> '
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_kinds_subsidies(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_kinds_subsidies(),
                          reply_markup=money.ramensk_subsidies_kinds_subsidies_keyboard())
         bot.register_next_step_handler(message, money_ramensk_subsidies_kinds)
     elif user_answer == 'Нет, я не соответствую':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Вернуться к методам привлечения денежных средств':
-        bot.send_message(message.chat.id, need_money_messages.choose_money_message(),
-                         reply_markup=money.money_kinds())
+        bot.send_message(message.chat.id, money_mes.choose_money_message(), reply_markup=money.money_kinds())
         bot.register_next_step_handler(message, start)
     elif user_answer == '< Вернуться к целям обращения':
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=money.ramensk_subsidies_IP_yes_keyboard())
+        bot.send_message(message.chat.id, wrong(), reply_markup=money.ramensk_subsidies_IP_yes_keyboard())
         bot.register_next_step_handler(message, money_ramensk_subsidies_yes)
 
 
 def money_ramensk_subsidies_kinds(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Общая':
-        users_dict[message.chat.id].bot_way += f'{message.text} ->'
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_general_subsidies(),
+        users_dict[message.chat.id].bot_way += f'{message.text} -> '
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_general_subsidies(),
                          reply_markup=money.ramensk_subsidies_social_subsidies_keyboard())
         bot.register_next_step_handler(message, money_ramensk_subsidies_general)
     elif user_answer == 'Социальная':
-        users_dict[message.chat.id].bot_way += f'{message.text} ->'
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_social_subsidies(),
+        users_dict[message.chat.id].bot_way += f'{message.text} -> '
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_social_subsidies(),
                          reply_markup=money.ramensk_subsidies_social_subsidies_keyboard())
         bot.register_next_step_handler(message, money_ramensk_subsidies_social)
     elif user_answer == '< Вернуться к методам привлечения денежных средств':
-        bot.send_message(message.chat.id, need_money_messages.choose_money_message(),
-                         reply_markup=money.money_kinds())
+        bot.send_message(message.chat.id, money_mes.choose_money_message(), reply_markup=money.money_kinds())
         bot.register_next_step_handler(message, start)
     elif user_answer == '< Вернуться к целям обращения':
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=money.ramensk_subsidies_kinds_subsidies_keyboard())
+        bot.send_message(message.chat.id, wrong(), reply_markup=money.ramensk_subsidies_kinds_subsidies_keyboard())
         bot.register_next_step_handler(message, money_ramensk_subsidies_kinds)
 
 
+#  !!! ЗАПИСЬ В ТАБЛИЦУ !!!
 # ВИДЫ ОБЩИХ СУБСИДИЙ
 def money_ramensk_subsidies_general(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Да':
         users_dict[message.chat.id].bot_way += f'Веду деятельность по одному из критериев -> '
-        bot.send_message(message.chat.id, need_money_messages.general_yes(),
-                         reply_markup=money.what_later_keyboard())
+        bot.send_message(message.chat.id, money_mes.general_yes(), reply_markup=money.what_later_keyboard())
         bot.register_next_step_handler(message, general_yes)
     elif user_answer == 'Нет':
-        users_dict[message.chat.id].bot_way += f'Не веду деятельность ни по одному из критериев'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        users_dict[message.chat.id].bot_way += f'Не веду деятельность ни по одному из критериев '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_kinds_subsidies(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_kinds_subsidies(),
                          reply_markup=money.ramensk_subsidies_kinds_subsidies_keyboard())
         bot.register_next_step_handler(message, money_ramensk_subsidies_kinds)
     elif user_answer == '< Вернуться к целям обращения':
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=money.ramensk_subsidies_social_subsidies_keyboard())
+        bot.send_message(message.chat.id, wrong(), reply_markup=money.ramensk_subsidies_social_subsidies_keyboard())
         bot.register_next_step_handler(message, money_ramensk_subsidies_general)
 
 
 def general_yes(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Отлично, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_yes_buy(),
+        bot.send_message(message.chat.id, money_mes.general_yes_buy(),
                          reply_markup=money.general_buy_rus_aboard_keyboard())
         bot.register_next_step_handler(message, general_yes_2)
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_general_subsidies(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_general_subsidies(),
                          reply_markup=money.ramensk_subsidies_social_subsidies_keyboard())
         bot.register_next_step_handler(message, money_ramensk_subsidies_general)
     elif user_answer == '< Вернуться к целям обращения':
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=money.what_later_keyboard())
+        bot.send_message(message.chat.id, wrong(), reply_markup=money.what_later_keyboard())
         bot.register_next_step_handler(message, general_yes)
 
 
+#  !!! ЗАПИСЬ В ТАБЛИЦУ !!!
 def general_yes_2(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'В России':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.general_yes_buy_rus(),
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.general_yes_buy_rus(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_1)
     elif user_answer == 'Зарубежом':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.general_yes_buy_aboard(),
-                         reply_markup=money.all_ok_keyboard())
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
+        bot.send_message(message.chat.id, money_mes.general_yes_buy_aboard(), reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_abroad_1)
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_yes(),
-                         reply_markup=money.what_later_keyboard())
+        bot.send_message(message.chat.id, money_mes.general_yes(), reply_markup=money.what_later_keyboard())
         bot.register_next_step_handler(message, general_yes)
     elif user_answer == '< Вернуться к целям обращения':
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=money.general_buy_rus_aboard_keyboard())
+        bot.send_message(message.chat.id, wrong(), reply_markup=money.general_buy_rus_aboard_keyboard())
         bot.register_next_step_handler(message, general_yes_2)
 
 
 def general_abroad_1(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_1(),
-                         reply_markup=money.all_ok_and_nothing_keyboard())
+        bot.send_message(message.chat.id, money_mes.general_rus_1(), reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_2)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_yes_buy(),
+        bot.send_message(message.chat.id, money_mes.general_yes_buy(),
                          reply_markup=money.general_buy_rus_aboard_keyboard())
         bot.register_next_step_handler(message, general_yes_2)
     elif user_answer == '< Вернуться к целям обращения':
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=money.all_ok_and_nothing_keyboard())
+        bot.send_message(message.chat.id, wrong(), reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_1)
 
 
 def general_abroad_2(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_aboard_2(),
+        bot.send_message(message.chat.id, money_mes.general_aboard_2(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_3)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_yes_buy_aboard(),
+        bot.send_message(message.chat.id, money_mes.general_yes_buy_aboard(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_1)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1362,16 +969,16 @@ def general_abroad_2(message: Message) -> None:
 def general_abroad_3(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_3(),
+        bot.send_message(message.chat.id, money_mes.general_rus_3(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_4)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_1(),
+        bot.send_message(message.chat.id, money_mes.general_rus_1(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_2)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1386,16 +993,16 @@ def general_abroad_3(message: Message) -> None:
 def general_abroad_4(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_4(),
+        bot.send_message(message.chat.id, money_mes.general_rus_4(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_5)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_aboard_2(),
+        bot.send_message(message.chat.id, money_mes.general_aboard_2(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_3)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1410,16 +1017,16 @@ def general_abroad_4(message: Message) -> None:
 def general_abroad_5(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_5(),
+        bot.send_message(message.chat.id, money_mes.general_rus_5(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_6)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_3(),
+        bot.send_message(message.chat.id, money_mes.general_rus_3(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_4)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1434,16 +1041,16 @@ def general_abroad_5(message: Message) -> None:
 def general_abroad_6(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_aboard_6(),
+        bot.send_message(message.chat.id, money_mes.general_aboard_6(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_7)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_4(),
+        bot.send_message(message.chat.id, money_mes.general_rus_4(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_5)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1458,16 +1065,16 @@ def general_abroad_6(message: Message) -> None:
 def general_abroad_7(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_7(),
+        bot.send_message(message.chat.id, money_mes.general_rus_7(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_8)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_5(),
+        bot.send_message(message.chat.id, money_mes.general_rus_5(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_6)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1482,16 +1089,16 @@ def general_abroad_7(message: Message) -> None:
 def general_abroad_8(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_8(),
+        bot.send_message(message.chat.id, money_mes.general_rus_8(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_9)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_aboard_6(),
+        bot.send_message(message.chat.id, money_mes.general_aboard_6(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_7)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1506,16 +1113,16 @@ def general_abroad_8(message: Message) -> None:
 def general_abroad_9(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_9(),
+        bot.send_message(message.chat.id, money_mes.general_rus_9(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_10)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_7(),
+        bot.send_message(message.chat.id, money_mes.general_rus_7(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_8)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1530,16 +1137,16 @@ def general_abroad_9(message: Message) -> None:
 def general_abroad_10(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_10(),
+        bot.send_message(message.chat.id, money_mes.general_rus_10(),
                          reply_markup=money.general_rus_10_keyboard())
         bot.register_next_step_handler(message, general_abroad_IP_or_entity)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_8(),
+        bot.send_message(message.chat.id, money_mes.general_rus_8(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_9)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1554,16 +1161,16 @@ def general_abroad_10(message: Message) -> None:
 def general_abroad_IP_or_entity(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Для индивидуальных предпринимателей':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_IP_11(),
+        bot.send_message(message.chat.id, money_mes.general_rus_IP_11(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_abroad_IP_12)
     elif user_answer == 'Для юридических лиц':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_11())
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_12(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_11())
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_12(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_abroad_entity_12)
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_9(),
+        bot.send_message(message.chat.id, money_mes.general_rus_9(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_abroad_10)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1578,11 +1185,11 @@ def general_abroad_IP_or_entity(message: Message) -> None:
 def general_abroad_IP_12(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_IP_12(),
+        bot.send_message(message.chat.id, money_mes.general_rus_IP_12(),
                          reply_markup=money.how_send_keyboard())
         bot.register_next_step_handler(message, general_abroad_IP_finish)
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_10(),
+        bot.send_message(message.chat.id, money_mes.general_rus_10(),
                          reply_markup=money.general_rus_10_keyboard())
         bot.register_next_step_handler(message, general_abroad_IP_or_entity)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1597,12 +1204,12 @@ def general_abroad_IP_12(message: Message) -> None:
 def general_abroad_IP_finish(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Как отправить документы':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_IP_13(),
+        bot.send_message(message.chat.id, money_mes.general_rus_IP_13(),
                          reply_markup=money.general_send_advertisement())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_IP_11(),
+        bot.send_message(message.chat.id, money_mes.general_rus_IP_11(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_abroad_IP_12)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1617,11 +1224,11 @@ def general_abroad_IP_finish(message: Message) -> None:
 def general_abroad_entity_12(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_13(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_13(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_abroad_entity_13)
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_10(),
+        bot.send_message(message.chat.id, money_mes.general_rus_10(),
                          reply_markup=money.general_rus_10_keyboard())
         bot.register_next_step_handler(message, general_abroad_IP_or_entity)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1636,11 +1243,11 @@ def general_abroad_entity_12(message: Message) -> None:
 def general_abroad_entity_13(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_14(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_14(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_abroad_entity_14)
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_12(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_12(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_abroad_entity_12)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1655,11 +1262,11 @@ def general_abroad_entity_13(message: Message) -> None:
 def general_abroad_entity_14(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_15(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_15(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_abroad_entity_15)
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_13(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_13(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_abroad_entity_13)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1674,11 +1281,11 @@ def general_abroad_entity_14(message: Message) -> None:
 def general_abroad_entity_15(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_16(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_16(),
                          reply_markup=money.how_send_keyboard())
         bot.register_next_step_handler(message, general_abroad_entity_finish)
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_14(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_14(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_abroad_entity_14)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1693,12 +1300,12 @@ def general_abroad_entity_15(message: Message) -> None:
 def general_abroad_entity_finish(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Как отправить документы':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_17(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_17(),
                          reply_markup=money.general_send_advertisement())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_15(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_15(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_abroad_entity_15)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1713,16 +1320,16 @@ def general_abroad_entity_finish(message: Message) -> None:
 def general_russia_1(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_1(),
+        bot.send_message(message.chat.id, money_mes.general_rus_1(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_2)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_yes_buy(),
+        bot.send_message(message.chat.id, money_mes.general_yes_buy(),
                          reply_markup=money.general_buy_rus_aboard_keyboard())
         bot.register_next_step_handler(message, general_yes_2)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1737,16 +1344,16 @@ def general_russia_1(message: Message) -> None:
 def general_russia_2(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_2(),
+        bot.send_message(message.chat.id, money_mes.general_rus_2(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_3)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_yes_buy_rus(),
+        bot.send_message(message.chat.id, money_mes.general_yes_buy_rus(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_1)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1761,16 +1368,16 @@ def general_russia_2(message: Message) -> None:
 def general_russia_3(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_3(),
+        bot.send_message(message.chat.id, money_mes.general_rus_3(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_4)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_1(),
+        bot.send_message(message.chat.id, money_mes.general_rus_1(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_2)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1785,16 +1392,16 @@ def general_russia_3(message: Message) -> None:
 def general_russia_4(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_4(),
+        bot.send_message(message.chat.id, money_mes.general_rus_4(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_5)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_2(),
+        bot.send_message(message.chat.id, money_mes.general_rus_2(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_3)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1809,16 +1416,16 @@ def general_russia_4(message: Message) -> None:
 def general_russia_5(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_5(),
+        bot.send_message(message.chat.id, money_mes.general_rus_5(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_6)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_3(),
+        bot.send_message(message.chat.id, money_mes.general_rus_3(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_4)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1833,16 +1440,16 @@ def general_russia_5(message: Message) -> None:
 def general_russia_6(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_6(),
+        bot.send_message(message.chat.id, money_mes.general_rus_6(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_7)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_4(),
+        bot.send_message(message.chat.id, money_mes.general_rus_4(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_5)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1857,16 +1464,16 @@ def general_russia_6(message: Message) -> None:
 def general_russia_7(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_7(),
+        bot.send_message(message.chat.id, money_mes.general_rus_7(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_8)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_5(),
+        bot.send_message(message.chat.id, money_mes.general_rus_5(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_6)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1881,16 +1488,16 @@ def general_russia_7(message: Message) -> None:
 def general_russia_8(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_8(),
+        bot.send_message(message.chat.id, money_mes.general_rus_8(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_9)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_6(),
+        bot.send_message(message.chat.id, money_mes.general_rus_6(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_7)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1905,16 +1512,16 @@ def general_russia_8(message: Message) -> None:
 def general_russia_9(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_9(),
+        bot.send_message(message.chat.id, money_mes.general_rus_9(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_10)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_7(),
+        bot.send_message(message.chat.id, money_mes.general_rus_7(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_8)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1929,16 +1536,16 @@ def general_russia_9(message: Message) -> None:
 def general_russia_10(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_10(),
+        bot.send_message(message.chat.id, money_mes.general_rus_10(),
                          reply_markup=money.general_rus_10_keyboard())
         bot.register_next_step_handler(message, general_russia_IP_or_entity)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_8(),
+        bot.send_message(message.chat.id, money_mes.general_rus_8(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_9)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1953,16 +1560,16 @@ def general_russia_10(message: Message) -> None:
 def general_russia_IP_or_entity(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Для индивидуальных предпринимателей':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_IP_11(),
+        bot.send_message(message.chat.id, money_mes.general_rus_IP_11(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_russia_IP_12)
     elif user_answer == 'Для юридических лиц':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_11())
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_12(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_11())
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_12(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_russia_entity_12)
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_9(),
+        bot.send_message(message.chat.id, money_mes.general_rus_9(),
                          reply_markup=money.all_ok_and_nothing_keyboard())
         bot.register_next_step_handler(message, general_russia_10)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1977,11 +1584,11 @@ def general_russia_IP_or_entity(message: Message) -> None:
 def general_russia_IP_12(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_IP_12(),
+        bot.send_message(message.chat.id, money_mes.general_rus_IP_12(),
                          reply_markup=money.how_send_keyboard())
         bot.register_next_step_handler(message, general_russia_IP_finish)
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_10(),
+        bot.send_message(message.chat.id, money_mes.general_rus_10(),
                          reply_markup=money.general_rus_10_keyboard())
         bot.register_next_step_handler(message, general_russia_IP_or_entity)
     elif user_answer == '< Вернуться к целям обращения':
@@ -1996,12 +1603,12 @@ def general_russia_IP_12(message: Message) -> None:
 def general_russia_IP_finish(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Как отправить документы':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_IP_13(),
+        bot.send_message(message.chat.id, money_mes.general_rus_IP_13(),
                          reply_markup=money.general_send_advertisement())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_IP_11(),
+        bot.send_message(message.chat.id, money_mes.general_rus_IP_11(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_russia_IP_12)
     elif user_answer == '< Вернуться к целям обращения':
@@ -2016,11 +1623,11 @@ def general_russia_IP_finish(message: Message) -> None:
 def general_russia_entity_12(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_13(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_13(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_russia_entity_13)
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_10(),
+        bot.send_message(message.chat.id, money_mes.general_rus_10(),
                          reply_markup=money.general_rus_10_keyboard())
         bot.register_next_step_handler(message, general_russia_IP_or_entity)
     elif user_answer == '< Вернуться к целям обращения':
@@ -2035,11 +1642,11 @@ def general_russia_entity_12(message: Message) -> None:
 def general_russia_entity_13(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_14(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_14(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_russia_entity_14)
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_12(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_12(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_russia_entity_12)
     elif user_answer == '< Вернуться к целям обращения':
@@ -2054,11 +1661,11 @@ def general_russia_entity_13(message: Message) -> None:
 def general_russia_entity_14(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_15(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_15(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_russia_entity_15)
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_13(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_13(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_russia_entity_13)
     elif user_answer == '< Вернуться к целям обращения':
@@ -2073,11 +1680,11 @@ def general_russia_entity_14(message: Message) -> None:
 def general_russia_entity_15(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Всё в порядке, что дальше?':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_16(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_16(),
                          reply_markup=money.how_send_keyboard())
         bot.register_next_step_handler(message, general_russia_entity_finish)
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_14(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_14(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_russia_entity_14)
     elif user_answer == '< Вернуться к целям обращения':
@@ -2092,12 +1699,12 @@ def general_russia_entity_15(message: Message) -> None:
 def general_russia_entity_finish(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'Как отправить документы':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_17(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_17(),
                          reply_markup=money.general_send_advertisement())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.general_rus_entity_15(),
+        bot.send_message(message.chat.id, money_mes.general_rus_entity_15(),
                          reply_markup=money.all_ok_keyboard())
         bot.register_next_step_handler(message, general_russia_entity_15)
     elif user_answer == '< Вернуться к целям обращения':
@@ -2124,12 +1731,12 @@ def money_ramensk_subsidies_social(message: Message) -> None:
         users_dict[message.chat.id].bot_way = ''
         users_dict[message.chat.id].start_time = None
         users_dict[message.chat.id].end_time = None
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_kinds_subsidies(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_kinds_subsidies(),
                          reply_markup=money.ramensk_subsidies_kinds_subsidies_keyboard())
         bot.register_next_step_handler(message, money_ramensk_subsidies_kinds)
     elif user_answer == '< Вернуться к целям обращения':
@@ -2141,153 +1748,101 @@ def money_ramensk_subsidies_social(message: Message) -> None:
         bot.register_next_step_handler(message, money_ramensk_subsidies_social)
 
 
+# !!! ЗАПИСЬ В ТАБЛИЦУ !!!
 # ВИДЫ СОЦИАЛЬНЫХ СУБСИДИЙ
 def socials_kinds(message: Message) -> None:
     user_answer = message.text
     if user_answer == 'На аренду':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
         bot.send_message(message.chat.id, socials_mes.socials_rent_1(),
                          reply_markup=socials.socials_all_ok_or_nothing_keyboard())
         bot.register_next_step_handler(message, socials_rent_1)
     elif user_answer == 'На оплату коммунальных услуг':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
         bot.send_message(message.chat.id, socials_mes.socials_utilities_1(),
                          reply_markup=socials.socials_all_ok_or_nothing_keyboard())
         bot.register_next_step_handler(message, socials_utilities_1)
     elif user_answer == 'На выкуп помещения':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
         bot.send_message(message.chat.id, socials_mes.socials_ransom_1(),
                          reply_markup=socials.socials_all_ok_or_nothing_keyboard())
         bot.register_next_step_handler(message, socials_ransom_1)
     elif user_answer == 'На текущий ремонт (осуществляется подрядным или хозяйственным способом)':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
         bot.send_message(message.chat.id, 'Выберете способ осуществления ремонта: ',
                          reply_markup=socials.socials_repair_kinds_keyboard())
         bot.register_next_step_handler(message, socials_repair_choose_kinds)
     elif user_answer == 'На капитальный ремонт':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
         bot.send_message(message.chat.id, socials_mes.socials_overhaul_1(),
                          reply_markup=socials.socials_all_ok_or_nothing_keyboard())
         bot.register_next_step_handler(message, socials_overhaul_1)
     elif user_answer == 'На реконструкцию помещения':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
         bot.send_message(message.chat.id, socials_mes.socials_reconstruction_1(),
                          reply_markup=socials.socials_all_ok_or_nothing_keyboard())
         bot.register_next_step_handler(message, socials_reconstruction_1)
     elif user_answer == 'На затраты по приобретению основных средств (за исключением легковых ' \
                         'автотранспортных средств)':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
         bot.send_message(message.chat.id, socials_mes.socials_funds_1(),
                          reply_markup=socials.socials_all_ok_or_nothing_keyboard())
         bot.register_next_step_handler(message, socials_funds_1)
     elif user_answer == 'На сырье/расходники':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
         bot.send_message(message.chat.id, socials_mes.socials_raw_1(),
                          reply_markup=socials.socials_all_ok_or_nothing_keyboard())
         bot.register_next_step_handler(message, socials_raw_1)
     elif user_answer == 'На участие в региональных, межрегиональных и международных выставочных ' \
                         'и выставочно-ярмарочных мероприятий':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
         bot.send_message(message.chat.id, socials_mes.socials_participation_1(),
                          reply_markup=socials.socials_all_ok_or_nothing_keyboard())
         bot.register_next_step_handler(message, socials_participation_1)
     elif user_answer == 'На приобретение оборудования':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
         bot.send_message(message.chat.id, socials_mes.socials_equipment_1_1())
         bot.send_message(message.chat.id, socials_mes.socials_equipment_1_2(),
                          reply_markup=socials.socials_all_ok_or_nothing_keyboard())
         bot.register_next_step_handler(message, socials_equipment_1)
     elif user_answer == 'На повышение квалификации и (или) участие в ' \
                         'образовательных программах работников':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
         bot.send_message(message.chat.id, socials_mes.socials_high_1(),
                          reply_markup=socials.socials_all_ok_or_nothing_keyboard())
         bot.register_next_step_handler(message, socials_high_1)
     elif user_answer == 'На медицинское обслуживание детей':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
         bot.send_message(message.chat.id, socials_mes.socials_med_1(),
                          reply_markup=socials.socials_all_ok_or_nothing_keyboard())
         bot.register_next_step_handler(message, socials_med_1)
     elif user_answer == 'На приобретение комплектующих изделий':
-        users_dict[message.chat.id].bot_way += f'{message.text}'
-        users_dict[message.chat.id].end_time = datetime.datetime.now().strftime(f'%d-%m-%Y %H:%M:%S')
-        sheets_example.insert_values(users_dict[message.chat.id].insert_in_table())
-        users_dict[message.chat.id].bot_way = ''
-        users_dict[message.chat.id].start_time = None
-        users_dict[message.chat.id].end_time = None
+        users_dict[message.chat.id].bot_way += f'{message.text} '
+        write_in_table(users_dict[message.chat.id])
         bot.send_message(message.chat.id, socials_mes.socials_components_1(),
                          reply_markup=socials.socials_all_ok_or_nothing_keyboard())
         bot.register_next_step_handler(message, socials_components_1)
     elif user_answer == '< Назад':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_social_subsidies(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_social_subsidies(),
                          reply_markup=money.ramensk_subsidies_social_subsidies_keyboard())
         bot.register_next_step_handler(message, money_ramensk_subsidies_social)
     elif user_answer == '< Вернуться к целям обращения':
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете услугу из списка: ',
-                         reply_markup=socials.socials_kinds_keyboard())
+        bot.send_message(message.chat.id, wrong(), reply_markup=socials.socials_kinds_keyboard())
         bot.register_next_step_handler(message, socials_kinds)
 
 
@@ -2310,8 +1865,7 @@ def socials_repair_choose_kinds(message: Message) -> None:
         bot.send_message(message.chat.id, choose_service_message(), reply_markup=keyboards.main_aims())
         bot.register_next_step_handler(message, start)
     else:
-        bot.send_message(message.chat.id, 'Неправильный ввод. Выберете из списка: ',
-                         reply_markup=socials.socials_repair_kinds_keyboard())
+        bot.send_message(message.chat.id, wrong(), reply_markup=socials.socials_repair_kinds_keyboard())
         bot.register_next_step_handler(message, socials_repair_choose_kinds)
 
 
@@ -2323,7 +1877,7 @@ def socials_repair_podryd_1(message: Message) -> None:
                          reply_markup=socials.socials_all_ok_keyboard())
         bot.register_next_step_handler(message, socials_repair_podryd_2)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -2461,7 +2015,7 @@ def socials_repair_podryd_8(message: Message) -> None:
                          reply_markup=socials.socials_IP_or_entity_keyboard())
         bot.register_next_step_handler(message, socials_repair_podryd_9)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -2646,7 +2200,7 @@ def socials_repair_economic_1(message: Message) -> None:
                          reply_markup=socials.socials_all_ok_keyboard())
         bot.register_next_step_handler(message, socials_repair_economic_2)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -2827,7 +2381,7 @@ def socials_repair_economic_beznal_9(message: Message) -> None:
                          reply_markup=socials.socials_IP_or_entity_keyboard())
         bot.register_next_step_handler(message, socials_repair_economic_beznal_10)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -3012,7 +2566,7 @@ def socials_repair_economic_nal_7(message: Message) -> None:
                          reply_markup=socials.socials_IP_or_entity_keyboard())
         bot.register_next_step_handler(message, socials_repair_economic_nal_8)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -3197,7 +2751,7 @@ def socials_participation_1(message: Message) -> None:
                          reply_markup=socials.socials_all_ok_keyboard())
         bot.register_next_step_handler(message, socials_participation_2)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -3221,7 +2775,7 @@ def socials_participation_2(message: Message) -> None:
                          reply_markup=socials.socials_all_ok_keyboard())
         bot.register_next_step_handler(message, socials_participation_3)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -3326,7 +2880,7 @@ def socials_participation_beznal_6(message: Message) -> None:
                          reply_markup=socials.socials_IP_or_entity_keyboard())
         bot.register_next_step_handler(message, socials_participation_beznal_7)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -3511,7 +3065,7 @@ def socials_participation_nal_4(message: Message) -> None:
                          reply_markup=socials.socials_IP_or_entity_keyboard())
         bot.register_next_step_handler(message, socials_participation_nal_5)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -3696,7 +3250,7 @@ def socials_equipment_1(message: Message) -> None:
                          reply_markup=socials.socials_nal_beznal_keyboard())
         bot.register_next_step_handler(message, socials_equipment_calculation)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -3840,7 +3394,7 @@ def socials_equipment_beznal_7(message: Message) -> None:
                          reply_markup=socials.socials_IP_or_entity_keyboard())
         bot.register_next_step_handler(message, socials_equipment_beznal_8)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -4025,7 +3579,7 @@ def socials_equipment_nal_2(message: Message) -> None:
                          reply_markup=socials.socials_all_ok_keyboard())
         bot.register_next_step_handler(message, socials_equipment_nal_3)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -4087,7 +3641,7 @@ def socials_equipment_nal_5(message: Message) -> None:
                          reply_markup=socials.socials_IP_or_entity_keyboard())
         bot.register_next_step_handler(message, socials_equipment_nal_6)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -4272,7 +3826,7 @@ def socials_raw_1(message: Message) -> None:
                          reply_markup=socials.socials_nal_beznal_keyboard())
         bot.register_next_step_handler(message, socials_raw_calculation)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -4576,7 +4130,7 @@ def socials_raw_nal_2(message: Message) -> None:
                          reply_markup=socials.socials_all_ok_keyboard())
         bot.register_next_step_handler(message, socials_raw_nal_3)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -4799,7 +4353,7 @@ def socials_funds_1(message: Message) -> None:
                          reply_markup=socials.socials_nal_beznal_keyboard())
         bot.register_next_step_handler(message, socials_funds_calculation)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -5141,7 +4695,7 @@ def socials_funds_nal_2(message: Message) -> None:
                          reply_markup=socials.socials_all_ok_keyboard())
         bot.register_next_step_handler(message, socials_funds_nal_3)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -5402,7 +4956,7 @@ def socials_ransom_1(message: Message) -> None:
                          reply_markup=socials.socials_all_ok_keyboard())
         bot.register_next_step_handler(message, socials_ransom_2)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -5502,7 +5056,7 @@ def socials_ransom_6(message: Message) -> None:
                          reply_markup=socials.socials_IP_or_entity_keyboard())
         bot.register_next_step_handler(message, socials_ransom_7)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -5687,7 +5241,7 @@ def socials_reconstruction_1(message: Message) -> None:
                          reply_markup=socials.socials_all_ok_keyboard())
         bot.register_next_step_handler(message, socials_reconstruction_2)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -5844,7 +5398,7 @@ def socials_reconstruction_9(message: Message) -> None:
                          reply_markup=socials.socials_IP_or_entity_keyboard())
         bot.register_next_step_handler(message, socials_reconstruction_10)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -6029,7 +5583,7 @@ def socials_overhaul_1(message: Message) -> None:
                          reply_markup=socials.socials_all_ok_keyboard())
         bot.register_next_step_handler(message, socials_overhaul_2)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -6167,7 +5721,7 @@ def socials_overhaul_8(message: Message) -> None:
                          reply_markup=socials.socials_IP_or_entity_keyboard())
         bot.register_next_step_handler(message, socials_overhaul_9)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -6352,7 +5906,7 @@ def socials_utilities_1(message: Message) -> None:
                          reply_markup=socials.socials_all_ok_keyboard())
         bot.register_next_step_handler(message, socials_utilities_2)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -6490,7 +6044,7 @@ def socials_utilities_8(message: Message) -> None:
                          reply_markup=socials.socials_IP_or_entity_keyboard())
         bot.register_next_step_handler(message, socials_utilities_9)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -6675,7 +6229,7 @@ def socials_rent_1(message: Message) -> None:
                          reply_markup=socials.socials_all_ok_keyboard())
         bot.register_next_step_handler(message, socials_rent_2)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -6813,7 +6367,7 @@ def socials_rent_8(message: Message) -> None:
                          reply_markup=socials.socials_IP_or_entity_keyboard())
         bot.register_next_step_handler(message, socials_rent_9)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -6998,7 +6552,7 @@ def socials_high_1(message: Message) -> None:
                          reply_markup=socials.socials_all_ok_keyboard())
         bot.register_next_step_handler(message, socials_high_2)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -7083,7 +6637,7 @@ def socials_high_nal_5(message: Message) -> None:
                          reply_markup=socials.socials_IP_or_entity_keyboard())
         bot.register_next_step_handler(message, socials_high_nal_6)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -7305,7 +6859,7 @@ def socials_high_beznal_7(message: Message) -> None:
                          reply_markup=socials.socials_IP_or_entity_keyboard())
         bot.register_next_step_handler(message, socials_high_beznal_8)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -7490,7 +7044,7 @@ def socials_med_1(message: Message) -> None:
                          reply_markup=socials.socials_all_ok_keyboard())
         bot.register_next_step_handler(message, socials_med_2)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -7609,7 +7163,7 @@ def socials_med_7(message: Message) -> None:
                          reply_markup=socials.socials_IP_or_entity_keyboard())
         bot.register_next_step_handler(message, socials_med_8)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -7794,7 +7348,7 @@ def socials_components_1(message: Message) -> None:
                          reply_markup=socials.socials_all_ok_keyboard())
         bot.register_next_step_handler(message, socials_components_2)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -7894,7 +7448,7 @@ def socials_components_6(message: Message) -> None:
                          reply_markup=socials.socials_IP_or_entity_keyboard())
         bot.register_next_step_handler(message, socials_components_7)
     elif user_answer == 'Чего-то не хватает':
-        bot.send_message(message.chat.id, need_money_messages.money_ramensk_subsidies_IP_no_1(),
+        bot.send_message(message.chat.id, money_mes.money_ramensk_subsidies_IP_no_1(),
                          reply_markup=money.ramensk_subsidies_no_1_link())
         bot.send_message(message.chat.id, text='На какой этап Вы хотите вернуться ?',
                          reply_markup=money.back_to_money_ramensk_subsidies())
@@ -8085,6 +7639,18 @@ def phone_message() -> str:
 
 def choose_service_message() -> str:
     return f'Отметьте цель Вашего обращения'
+
+
+def back_mes() -> str:
+    return f'На какой этап Вы хотите вернуться ?'
+
+
+def error_mes() -> str:
+    return f'Я не знаю такой команды...\nВоспользуйтесь клавиатурой снизу'
+
+
+def wrong() -> str:
+    return f'Неправильный ввод.\nВыберете услугу из списка: '
 
 
 if __name__ == '__main__':

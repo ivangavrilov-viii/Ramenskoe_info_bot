@@ -14,11 +14,6 @@ def main_aims() -> types.ReplyKeyboardMarkup:
     return keyboard
 
 
-
-
-
-
-
 def meet_kind() -> types.ReplyKeyboardMarkup:
     """Функция для создания клавиатуры по поиску знакомств"""
 
@@ -63,7 +58,7 @@ def back_to_workers_kind() -> types.ReplyKeyboardMarkup:
 
 
 def other_supports_kind() -> types.ReplyKeyboardMarkup:
-    """Функция для создания клавиатуры по поиску работников"""
+    """Функция для создания клавиатуры по поиску других мер"""
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add(types.KeyboardButton(text='Бизнес Омбудсмен Раменского г.о.'))
@@ -82,16 +77,9 @@ def other_supports_kind() -> types.ReplyKeyboardMarkup:
 
 
 def back_to_other_supports_kind() -> types.ReplyKeyboardMarkup:
-    """Функция для создания клавиатуры для возвращения к поиску работников или в главное меню"""
+    """Функция для создания клавиатуры для возвращения к мерам поддержки или в главное меню"""
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add(types.KeyboardButton(text='< Вернуться к мерам поддержки'))
     keyboard.add(types.KeyboardButton(text='< Вернуться к целям обращения'))
     return keyboard
-
-
-
-
-
-
-

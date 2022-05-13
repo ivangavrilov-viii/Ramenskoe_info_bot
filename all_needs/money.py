@@ -2,7 +2,7 @@ from telebot import types
 
 
 def money_kinds() -> types.ReplyKeyboardMarkup:
-    """Функция для создания клавиатуры по методам привлечения методов"""
+    """Функция для создания клавиатуры по методам привлечения денег"""
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add(types.KeyboardButton(text='Областное финансирование'))
@@ -23,7 +23,7 @@ def back_to_money_kinds() -> types.ReplyKeyboardMarkup:
 
 
 def money_country_finance() -> types.ReplyKeyboardMarkup:
-    """Функция для создания клавиатуры для методов привлечения методов"""
+    """Функция для создания клавиатуры для методов привлечения денег"""
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add(types.KeyboardButton(text='Бесплатная печать полиграфии'))
@@ -66,32 +66,36 @@ def back_to_money_country_finance() -> types.ReplyKeyboardMarkup:
 
 
 def money_need_credit_link() -> types.InlineKeyboardMarkup:
+    """Функция для создания инлайн клавиатуры """
+
     keyboard = types.InlineKeyboardMarkup(row_width=1)
     keyboard.add(types.InlineKeyboardButton(text='МКК', url='https://www.mofmicro.ru/ru/'))
     return keyboard
 
 
 def money_country_advert_link() -> types.InlineKeyboardMarkup:
+    """Функция для создания инлайн клавиатуры """
+
     keyboard = types.InlineKeyboardMarkup(row_width=1)
     keyboard.add(types.InlineKeyboardButton(text='Подать заявку', url='https://uslugi.mosreg.ru/services/20796'))
     return keyboard
 
 
 def ramensk_subsidies_keyboard() -> types.ReplyKeyboardMarkup:
-    """Функция для создания клавиатуры по методам привлечения методов"""
+    """Функция для создания клавиатуры """
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add(types.KeyboardButton(text='Да'))
     keyboard.add(types.KeyboardButton(text='Нет, я самозанятый'))
     keyboard.add(types.KeyboardButton(text='Нет, но я планирую стать ИП или самозанятым или '
-                                           'открыть коммерческую организацию'))
+                                           'открыть организацию'))
     keyboard.add(types.KeyboardButton(text='< Вернуться к методам привлечения денежных средств'))
     keyboard.add(types.KeyboardButton(text='< Вернуться к целям обращения'))
     return keyboard
 
 
 def ramensk_subsidies_IP_yes_keyboard() -> types.ReplyKeyboardMarkup:
-    """Функция для создания клавиатуры по методам привлечения методов"""
+    """Функция для создания клавиатуры """
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add(types.KeyboardButton(text='Да, я соответствую'))
@@ -102,6 +106,8 @@ def ramensk_subsidies_IP_yes_keyboard() -> types.ReplyKeyboardMarkup:
 
 
 def ramensk_subsidies_no_1_link() -> types.InlineKeyboardMarkup:
+    """Функция для создания инлайн клавиатуры """
+
     keyboard = types.InlineKeyboardMarkup(row_width=1)
     keyboard.add(types.InlineKeyboardButton(text='Инвестиционный портал Московской области',
                                             url='https://invest.mosreg.ru/investor/calculator'))
@@ -118,7 +124,7 @@ def back_to_money_ramensk_subsidies() -> types.ReplyKeyboardMarkup:
 
 
 def ramensk_subsidies_no_2_keyboard() -> types.ReplyKeyboardMarkup:
-    """Функция для создания клавиатуры для возвращения к """
+    """Функция для создания клавиатуры """
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add(types.KeyboardButton(text='Меньше прожиточного минимума'))
@@ -129,7 +135,7 @@ def ramensk_subsidies_no_2_keyboard() -> types.ReplyKeyboardMarkup:
 
 
 def ramensk_subsidies_kinds_subsidies_keyboard() -> types.ReplyKeyboardMarkup:
-    """Функция для создания клавиатуры для возвращения к """
+    """Функция для создания клавиатуры """
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add(types.KeyboardButton(text='Общая'))
@@ -140,7 +146,7 @@ def ramensk_subsidies_kinds_subsidies_keyboard() -> types.ReplyKeyboardMarkup:
 
 
 def ramensk_subsidies_social_subsidies_keyboard() -> types.ReplyKeyboardMarkup:
-    """Функция для создания клавиатуры для возвращения к """
+    """Функция для создания клавиатуры """
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add(types.KeyboardButton(text='Да'))
@@ -151,7 +157,7 @@ def ramensk_subsidies_social_subsidies_keyboard() -> types.ReplyKeyboardMarkup:
 
 
 def what_later_keyboard() -> types.ReplyKeyboardMarkup:
-    """Функция для создания клавиатуры для возвращения к """
+    """Функция для создания клавиатуры """
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add(types.KeyboardButton(text='Отлично, что дальше?'))
@@ -161,7 +167,7 @@ def what_later_keyboard() -> types.ReplyKeyboardMarkup:
 
 
 def general_buy_rus_aboard_keyboard() -> types.ReplyKeyboardMarkup:
-    """Функция для создания клавиатуры для возвращения к """
+    """Функция для создания клавиатуры """
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add(types.KeyboardButton(text='В России'))
@@ -172,7 +178,7 @@ def general_buy_rus_aboard_keyboard() -> types.ReplyKeyboardMarkup:
 
 
 def all_ok_keyboard() -> types.ReplyKeyboardMarkup:
-    """Функция для создания клавиатуры для возвращения к """
+    """Функция для создания клавиатуры """
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add(types.KeyboardButton(text='Всё в порядке, что дальше?'))
@@ -182,7 +188,7 @@ def all_ok_keyboard() -> types.ReplyKeyboardMarkup:
 
 
 def all_ok_and_nothing_keyboard() -> types.ReplyKeyboardMarkup:
-    """Функция для создания клавиатуры для возвращения к """
+    """Функция для создания клавиатуры """
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add(types.KeyboardButton(text='Всё в порядке, что дальше?'))
@@ -193,7 +199,7 @@ def all_ok_and_nothing_keyboard() -> types.ReplyKeyboardMarkup:
 
 
 def general_rus_10_keyboard() -> types.ReplyKeyboardMarkup:
-    """Функция для создания клавиатуры для возвращения к """
+    """Функция для создания клавиатуры """
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add(types.KeyboardButton(text='Для индивидуальных предпринимателей'))
@@ -204,7 +210,7 @@ def general_rus_10_keyboard() -> types.ReplyKeyboardMarkup:
 
 
 def how_send_keyboard() -> types.ReplyKeyboardMarkup:
-    """Функция для создания клавиатуры для возвращения к """
+    """Функция для создания клавиатуры """
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add(types.KeyboardButton(text='Как отправить документы'))
@@ -214,6 +220,8 @@ def how_send_keyboard() -> types.ReplyKeyboardMarkup:
 
 
 def general_send_advertisement() -> types.InlineKeyboardMarkup:
+    """Функция для создания инлайн клавиатуры """
+
     keyboard = types.InlineKeyboardMarkup(row_width=1)
     keyboard.add(types.InlineKeyboardButton(text='ПОДАТЬ ДОКУМЕНТЫ', url='https://uslugi.mosreg.ru/services/21001'))
     return keyboard

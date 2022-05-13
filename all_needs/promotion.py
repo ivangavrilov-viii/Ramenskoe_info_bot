@@ -57,7 +57,7 @@ def back_to_sale_aboard() -> types.ReplyKeyboardMarkup:
     return keyboard
 
 
-def promotion_sale_aboard_more_link() -> types.InlineKeyboardMarkup:
+def abroad_link() -> types.InlineKeyboardMarkup:
     keyboard = types.InlineKeyboardMarkup(row_width=1)
     keyboard.add(types.InlineKeyboardButton(text='Подробнее', url='https://exportmo.ru/service'))
     return keyboard
