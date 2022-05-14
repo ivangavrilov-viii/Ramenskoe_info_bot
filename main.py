@@ -195,8 +195,7 @@ def start(message: Message) -> None:
                 write_in_table(users_dict[message.chat.id])
                 bot.send_message(message.chat.id, other_mes.free_legal_consult(),
                                  reply_markup=keyboards.back_to_other_supports_kind())
-            elif message.text == 'Консультации от Управления потребительского рынка, инвестиций и ' \
-                                 'развития предпринимательства':
+            elif message.text == 'Консультации от Управления потребрынка, инвестиций и предпринимательства':
                 write_in_table(users_dict[message.chat.id])
                 bot.send_message(message.chat.id, other_mes.consult_control(),
                                  reply_markup=keyboards.back_to_other_supports_kind())
@@ -1770,7 +1769,7 @@ def socials_kinds(message: Message) -> None:
         bot.send_message(message.chat.id, socials_mes.socials_ransom_1(),
                          reply_markup=socials.socials_all_ok_or_nothing_keyboard())
         bot.register_next_step_handler(message, socials_ransom_1)
-    elif user_answer == 'На текущий ремонт (осуществляется подрядным или хозяйственным способом)':
+    elif user_answer == 'На текущий ремонт (подрядным или хозяйственным)':
         users_dict[message.chat.id].bot_way += f'{message.text} '
         write_in_table(users_dict[message.chat.id])
         bot.send_message(message.chat.id, 'Выберете способ осуществления ремонта: ',
@@ -1788,8 +1787,7 @@ def socials_kinds(message: Message) -> None:
         bot.send_message(message.chat.id, socials_mes.socials_reconstruction_1(),
                          reply_markup=socials.socials_all_ok_or_nothing_keyboard())
         bot.register_next_step_handler(message, socials_reconstruction_1)
-    elif user_answer == 'На затраты по приобретению основных средств (за исключением легковых ' \
-                        'автотранспортных средств)':
+    elif user_answer == 'На затраты по приобретению основных средств (кроме легкового авто)':
         users_dict[message.chat.id].bot_way += f'{message.text} '
         write_in_table(users_dict[message.chat.id])
         bot.send_message(message.chat.id, socials_mes.socials_funds_1(),
@@ -1801,8 +1799,7 @@ def socials_kinds(message: Message) -> None:
         bot.send_message(message.chat.id, socials_mes.socials_raw_1(),
                          reply_markup=socials.socials_all_ok_or_nothing_keyboard())
         bot.register_next_step_handler(message, socials_raw_1)
-    elif user_answer == 'На участие в региональных, межрегиональных и международных выставочных ' \
-                        'и выставочно-ярмарочных мероприятий':
+    elif user_answer == 'На участие в выставочно-ярмарочных мероприятиях':
         users_dict[message.chat.id].bot_way += f'{message.text} '
         write_in_table(users_dict[message.chat.id])
         bot.send_message(message.chat.id, socials_mes.socials_participation_1(),
@@ -1815,8 +1812,7 @@ def socials_kinds(message: Message) -> None:
         bot.send_message(message.chat.id, socials_mes.socials_equipment_1_2(),
                          reply_markup=socials.socials_all_ok_or_nothing_keyboard())
         bot.register_next_step_handler(message, socials_equipment_1)
-    elif user_answer == 'На повышение квалификации и (или) участие в ' \
-                        'образовательных программах работников':
+    elif user_answer == 'На повышение квалификации и (или) участие в образовательных программах работников':
         users_dict[message.chat.id].bot_way += f'{message.text} '
         write_in_table(users_dict[message.chat.id])
         bot.send_message(message.chat.id, socials_mes.socials_high_1(),

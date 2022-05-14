@@ -8,14 +8,12 @@ def socials_kinds_keyboard() -> types.ReplyKeyboardMarkup:
     keyboard.add(types.KeyboardButton(text='На аренду'))
     keyboard.add(types.KeyboardButton(text='На оплату коммунальных услуг'))
     keyboard.add(types.KeyboardButton(text='На выкуп помещения'))
-    keyboard.add(types.KeyboardButton(text='На текущий ремонт (осуществляется подрядным или хозяйственным способом)'))
+    keyboard.add(types.KeyboardButton(text='На текущий ремонт (подрядным или хозяйственным)'))
     keyboard.add(types.KeyboardButton(text='На капитальный ремонт'))
     keyboard.add(types.KeyboardButton(text='На реконструкцию помещения'))
-    keyboard.add(types.KeyboardButton(text='На затраты по приобретению основных средств (за исключением легковых '
-                                           'автотранспортных средств)'))
+    keyboard.add(types.KeyboardButton(text='На затраты по приобретению основных средств (кроме легкового авто)'))
     keyboard.add(types.KeyboardButton(text='На сырье/расходники'))
-    keyboard.add(types.KeyboardButton(text='На участие в региональных, межрегиональных и международных выставочных '
-                                           'и выставочно-ярмарочных мероприятий'))
+    keyboard.add(types.KeyboardButton(text='На участие в выставочно-ярмарочных мероприятиях'))
     keyboard.add(types.KeyboardButton(text='На приобретение оборудования'))
     keyboard.add(types.KeyboardButton(text='На повышение квалификации и (или) участие в образовательных программах '
                                            'работников'))

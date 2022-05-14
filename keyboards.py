@@ -63,8 +63,7 @@ def other_supports_kind() -> types.ReplyKeyboardMarkup:
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     keyboard.add(types.KeyboardButton(text='Бизнес Омбудсмен Раменского г.о.'))
     keyboard.add(types.KeyboardButton(text='Бесплатная юридическая помощь для МСП'))
-    keyboard.add(types.KeyboardButton(text='Консультации от Управления потребительского рынка, '
-                                           'инвестиций и развития предпринимательства'))
+    keyboard.add(types.KeyboardButton(text='Консультации от Управления потребрынка, инвестиций и предпринимательства'))
     keyboard.add(types.KeyboardButton(text='Наладить производство'))
     keyboard.add(types.KeyboardButton(text='Наладить фермерское хозяйство'))
     keyboard.add(types.KeyboardButton(text='IT сфера'))
